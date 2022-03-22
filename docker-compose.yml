@@ -1,0 +1,13 @@
+version: '3'
+services:
+  freeswitch:
+    image: freeswitch-mini:1.10-0.1.0
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
+    network_mode: host
+    volumes:
+      - ./conf:/etc/freeswitch
+      - ./share:/usr/share/freeswitch
+    tmpfs:
+      - /var/lib/freeswitch/db
