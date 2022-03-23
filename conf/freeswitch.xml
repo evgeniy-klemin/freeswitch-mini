@@ -23,22 +23,31 @@
     <load module="mod_dptools"/>
     <load module="mod_commands"/>
     <load module="mod_sndfile"/>
-    <load module="mod_opus"/>
+    <load module="mod_unimrcp"/>
   </modules>
 </configuration>
 
-<configuration name="opus.conf">
+<configuration name="unimrcp.conf" description="UniMRCP Client">
   <settings>
-    <param name="use-vbr" value="1"/>
-    <param name="use-dtx" value="0"/>
-    <param name="complexity" value="10"/>
-    <param name="maxaveragebitrate" value="14400"/>
-    <param name="maxplaybackrate" value="8000"/>
-    <param name="packet-loss-percent" value="15"/>
-    <param name="keep-fec-enabled" value="1"/>
-    <param name="use-jb-lookahead" value="1"/>
-    <param name="advertise-useinbandfec" value="1"/>
+    <param name="default-tts-profile" value="test-mrcp1"/>
+    <param name="default-asr-profile" value="test-mrcp1"/>
+    <param name="log-level" value="DEBUG"/>
+    <param name="max-connection-count" value="100"/>
+    <param name="offer-new-connection" value="1"/>
   </settings>
+  <profiles>
+    <profile name="test-mrcp1" version="1">
+      <param name="server-ip" value="localhost"/>
+      <param name="server-port" value="8000"/>
+      <param name="resource-location" value=""/>
+      <param name="speechsynth" value="tts"/>
+      <param name="speechrecog" value="asr"/>
+      <param name="rtp-ip" value="192.168.88.227"/>
+      <param name="rtp-port-min" value="32768"/>
+      <param name="rtp-port-max" value="33268"/>
+      <param name="codecs" value="PCMU PCMA"/>
+    </profile>
+  </profiles>
 </configuration>
 
 <configuration name="console.conf">
@@ -77,28 +86,24 @@
     <param name="debug-presence" value="0"/>
   </global_settings>
   <profiles>
-    <profile name="webrtc">
+    <profile name="forsipclient">
       <domains>
         <domain name="$${domain}"/>
       </domains>
       <settings>
-        <param name="context" value="webrtc"/>
+        <param name="context" value="forsipclient"/>
         <param name="sip-port" value="5060"/>
         <param name="tls-sip-port" value="5080"/>
         <param name="dialplan" value="XML"/>
         <param name="sip-ip" value="$${local_ip_v4}"/>
         <param name="rtp-ip" value="$${local_ip_v4}"/>
-        <param name="ws-binding" value=":5071"/>
-        <param name="wss-binding" value=":5081"/>
         <param name="tls" value="true"/>
         <param name="tls-only" value="false"/>
         <param name="tls-bind-params" value="transport=tls"/>
-        <param name="codec-prefs" value="OPUS@8000h"/>
+        <param name="codec-prefs" value="PCMU,PCMA"/>
         <param name="codec-negotiation" value="greedy"/>
-        <param name="disable-transcoding" value="true"/>
+        <param name="disable-transcoding" value="false"/>
         <param name="apply-candidate-acl" value="localnet.auto"/>
-        <!-- fix webrtc audio latency problem -->
-        <param name="rtp-timer-name" value="soft"/>
       </settings>
     </profile>
   </profiles>
@@ -107,13 +112,11 @@
 </section>
 
 <section name="dialplan">
-  <context name="webrtc">
-    <extension name="webrtc">
+  <context name="forsipclient">
+    <extension name="forsipclient">
       <condition field="destination_number" expression="^(0000)$">
         <action application="answer"/>
-        <action application="set" data="playback_sleep_val=0"/>
-        <action application="sched_hangup" data="+60 NORMAL_CLEARING"/>
-        <action application="endless_playback" data="background_8k.wav"/>
+        <action application="speak" data="unimrcp:test-mrcp1||Innotech"/>
         <action application="hangup"/>
       </condition>
     </extension>

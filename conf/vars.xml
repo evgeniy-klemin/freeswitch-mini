@@ -1,5 +1,5 @@
 <include>
-  <X-PRE-PROCESS cmd="set" data="local_ip_v4=0.0.0.0"/>
+  <X-PRE-PROCESS cmd="set" data="local_ip_v4=192.168.255.138"/>
   <X-PRE-PROCESS cmd="set" data="domain=local"/>
   <X-PRE-PROCESS cmd="set" data="domain_name=local"/>
 </include>

@@ -4,10 +4,18 @@
 
 ## Настройка
 
-Требуется только для тестирования с медиа-трафиком в сип-фоне
-
 1. Прописать локальный ip в [./Makefile](./Makefile) в переменную `IP`
-2. Прописать локальный ip в [./conf/vars.xml](./conf/vars.xml) во все переменные
+2. Прописать локальный ip в [./conf/vars.xml](./conf/vars.xml) в переменную `local_ip_v4`
+3. Настроить параметры MRCP сервера в [./conf/freeswitch.xml](./conf/freeswitch.xml)
+
+```XML
+      <param name="server-ip" value="localhost"/> - адрес MRCP сервера
+      <param name="server-port" value="8000"/> - порт MRCP сервера
+      <param name="resource-location" value=""/>
+      <param name="speechsynth" value="tts"/>
+      <param name="speechrecog" value="asr"/>
+      <param name="rtp-ip" value="192.168.88.227"/> - локальный адрес
+```
 
 
 ## Запуск
@@ -16,29 +24,28 @@
 docker-compose up
 ```
 
-## Регистрация сип-фона
-
-Для хождения media-трафика, в docker-compose.yml поменять сеть на `network_mode: host`
+## Регистрация сип-фона (zoiper)
 
 user=101
-
 pass=101
+domain=local
+ip=<локальный>
 
-ip - локальный
-
-
-## Инициация вызова
-
-```bash
-make invite
-
-```
+Номер для проверки: 0000
 
 
 ## Консоль FreeSwitch
 
 ```bash
 make fs_cli
+
+```
+
+
+## Инициация вызова
+
+```bash
+make invite
 
 ```
 
